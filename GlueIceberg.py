@@ -42,9 +42,16 @@ df=(glueContext.read.forma('parquet')
     .load("MyS3Path")
 )
 
+### To ways to write 
+
+##way 1 
 df.writeTo(f"{catalog_name}.{database_name}.{table_name}")\
   .tableProperty("format-version","2")\
   .createOrReplace()
+### way 2 
+df.createOrReplaceTempView("tableC")
+spark.sql(f"CREATE OR REPLACE TABLE {catalog_name}.{database_name}.{table_name} USING iceberg AS select * from tableC")
+
 
 job.commit()
 print("JobEnds")
